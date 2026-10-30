@@ -1,0 +1,54 @@
+<div class="register-page">
+  <section class="register-card">
+    <h1>Register</h1>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()" novalidate>
+      <div class="form-field">
+        <label for="username">username</label>
+        <input id="username" type="text" formControlName="username" />
+        @if (registerForm.controls.username.touched && registerForm.controls.username.invalid) {
+          <p class="validation-message">Username is required.</p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="password">password</label>
+        <input id="password" type="password" formControlName="password" />
+        @if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
+          @if (registerForm.controls.password.hasError('required')) {
+            <p class="validation-message">Password is required.</p>
+          }
+          @if (registerForm.controls.password.hasError('pattern')) {
+            <p class="validation-message">Password must be at least 8 characters long, contain at least one uppercase letter and one number.</p>
+          }
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="confirmPassword">confirm password</label>
+        <input id="confirmPassword" type="password" formControlName="confirmPassword" />
+        @if (registerForm.controls.confirmPassword.touched && registerForm.controls.confirmPassword.invalid) {
+          <p class="validation-message">Confirm password is required.</p>
+        }
+      </div>
+
+      @if (registerForm.touched && registerForm.hasError('passwordMismatch')) {
+        <p class="validation-message">Password and confirm password must match.</p>
+      }
+
+      @if (errorMessage()) {
+        <p class="error-message">{{ errorMessage() }}</p>
+      }
+
+      @if (successMessage()) {
+        <p class="success-message">{{ successMessage() }}</p>
+      }
+
+      <div class="actions">
+        <button type="submit" [disabled]="registerForm.invalid">Register</button>
+      </div>
+
+      <button type="button" class="back-link" (click)="goToLogin()">Back to Login</button>
+    </form>
+  </section>
+</div>

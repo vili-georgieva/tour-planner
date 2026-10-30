@@ -1,0 +1,134 @@
+@if (!tour()) {
+	<p>Select a tour from the list</p>
+} @else {
+	<section class="tour-detail">
+		<h2>{{ tour()!.name }}</h2>
+
+		<div class="tour-actions">
+			<button type="button" (click)="requestEdit()">Edit</button>
+			<button type="button" class="danger" (click)="requestDelete()">Delete</button>
+		</div>
+
+		<div class="detail-row">
+			<app-attribute-field label="From" [value]="tour()!.from" />
+			<app-attribute-field label="To" [value]="tour()!.to" />
+			<app-attribute-field label="Distance (km)" [value]="tour()!.distanceKm" />
+			<app-attribute-field label="Estimated Time (min)" [value]="tour()!.estimatedTimeMin" />
+			<app-attribute-field label="Transport Type" [value]="tour()!.transportType" />
+			<app-attribute-field label="Popularity (logs)" [value]="tour()!.popularity" />
+			<app-attribute-field label="Child Friendly" [value]="tour()!.childFriendliness" />
+		</div>
+
+		@if (imagePath()) {
+			<div class="tour-image-wrapper">
+				<img
+					[src]="imagePath()!"
+					[alt]="imageAlt()"
+					class="tour-image"
+				/>
+			</div>
+		}
+
+		<p class="tour-description">{{ tour()!.description }}</p>
+
+		<div class="map-wrapper">
+			<div #leafletMap class="tour-map" aria-label="Tour map"></div>
+
+			@if (mapError()) {
+				<p class="map-error">{{ mapError() }}</p>
+			}
+		</div>
+
+		@if (elevationSvgData(); as svgData) {
+			<div class="elevation-section">
+				<div class="elevation-header">
+					<span class="elevation-title">Elevation Profile</span>
+					<div class="elevation-badges">
+						@if (ascentLabel()) {
+							<span class="badge badge-ascent">{{ ascentLabel() }}</span>
+						}
+						@if (descentLabel()) {
+							<span class="badge badge-descent">{{ descentLabel() }}</span>
+						}
+					</div>
+				</div>
+				<div #chartWrapper class="chart-scroll-wrapper">
+					<svg
+						class="elevation-chart"
+						[attr.viewBox]="svgData.viewBox"
+						preserveAspectRatio="xMidYMid meet"
+						aria-label="Elevation profile chart"
+						role="img">
+						<defs>
+							<linearGradient id="elevGrad" x1="0" y1="0" x2="0" y2="1">
+								<stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4"/>
+								<stop offset="100%" stop-color="#3b82f6" stop-opacity="0.04"/>
+							</linearGradient>
+						</defs>
+
+						<!-- Horizontal grid lines at y-axis label positions -->
+						@for (yl of svgData.yLabels; track yl.label) {
+							<line
+								[attr.x1]="svgData.padLeft"
+								[attr.y1]="yl.y"
+								[attr.x2]="svgData.padLeft + svgData.drawW"
+								[attr.y2]="yl.y"
+								class="grid-line"/>
+						}
+
+						<!-- Solid axis lines to ground chart visually -->
+						<line
+							[attr.x1]="svgData.padLeft"
+							[attr.y1]="svgData.padTop"
+							[attr.x2]="svgData.padLeft"
+							[attr.y2]="svgData.padTop + svgData.drawH"
+							stroke="#cbd5e1"
+							stroke-width="1"/>
+						<line
+							[attr.x1]="svgData.padLeft"
+							[attr.y1]="svgData.padTop + svgData.drawH"
+							[attr.x2]="svgData.padLeft + svgData.drawW"
+							[attr.y2]="svgData.padTop + svgData.drawH"
+							stroke="#cbd5e1"
+							stroke-width="1"/>
+
+						<!-- Filled area under curve -->
+						<path [attr.d]="svgData.areaPath" class="elevation-area"/>
+
+						<!-- Elevation line path -->
+						<path [attr.d]="svgData.linePath" class="elevation-line"/>
+
+						<!-- Y-axis labels (elevation) -->
+						@for (yl of svgData.yLabels; track yl.label) {
+							<text
+								[attr.x]="svgData.padLeft - 8"
+								[attr.y]="yl.y"
+								class="axis-label y-label">{{ yl.label }}</text>
+						}
+
+						<!-- X-axis labels (distance km) -->
+						@for (xl of svgData.xLabels; track xl.label) {
+							<text
+								[attr.x]="xl.x"
+								[attr.y]="svgData.padTop + svgData.drawH + 16"
+								class="axis-label x-label">{{ xl.label }}</text>
+						}
+
+						<!-- X-axis unit label (centered below axis) -->
+						<text 
+							[attr.x]="svgData.padLeft + (svgData.drawW / 2)" 
+							[attr.y]="svgData.padTop + svgData.drawH + 36" 
+							class="axis-label x-unit">Distance (km)</text>
+					</svg>
+				</div>
+			</div>
+		}
+
+		<app-tour-log-list
+			[tourId]="tour()!.id"
+			[logs]="logs()"
+			(addRequested)="requestAddLog()"
+			(editRequested)="requestEditLog($event)"
+			(deleteRequested)="requestDeleteLog($event)" />
+	</section>
+}
