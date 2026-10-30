@@ -17,7 +17,7 @@ Backend for the Tour Planner application. Built with Spring Boot and PostgreSQL,
 
 ## Run with Docker
 
-```powershell
+```bash
 docker compose up --build
 ```
 
@@ -25,8 +25,8 @@ This starts PostgreSQL on port `5433` and the API on port `8080`.
 
 ## Run Tests
 
-```powershell
-.\mvnw.cmd clean test
+```bash
+./mvnw clean test
 ```
 
 Tests run against an in-memory H2 database, so no Docker container is required.

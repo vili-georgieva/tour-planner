@@ -1,33 +1,11 @@
-# Tour Planner UI
+# Tour Planner frontend
 
-Frontend for the Tour Planner application. Built with Angular (standalone components, signals) following the MVVM pattern.
-
-## Tech Stack
-
-- Angular 21
-- Leaflet (map rendering)
-- Signals for state management (`MainShell` acts as the ViewModel)
-
-## Prerequisite
-
-The backend API must be running first (see `Tour Planner API` README), reachable at `http://localhost:8080`.
-
-## Setup
+Angular 21 client for the Tour Planner API. See the README in the repository root for the full setup.
 
 ```bash
 npm install
-npm start
+npm start        # dev server on http://localhost:4200
+npm test         # unit tests with Vitest
 ```
 
-Open the browser at `http://localhost:4200/`.
-
-## Running unit tests
-
-```bash
-npm run test
-```
-
-## GitHub Repositories
-
-- UI: https://github.com/David-Velichka/Tour-Planner-UI
-- API: https://github.com/David-Velichka/Tour-Planner-API
+The API base URL is set in the services under `src/app/services` and points to `http://localhost:8080`.
